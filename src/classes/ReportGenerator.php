@@ -34,9 +34,7 @@ class ReportGenerator {
         return $stats;
     }
 
-    /**
-     * Generates a detailed list of volunteers and their contribution totals.
-     */
+
     public function getVolunteerParticipationReport() {
                 $query = "SELECT 
                                         v.first_name, 
@@ -53,9 +51,22 @@ class ReportGenerator {
         return $stmt->fetchAll();
     }
 
-    /**
-     * Reports on specific event performance.
-     */
+    public function getVolunteersWithTaskCounts() {
+        $query = "WITH TaskCounts AS (
+                      SELECT volunteer_id, COUNT(id) as total_tasks
+                      FROM participation
+                      GROUP BY volunteer_id
+                  )
+                  SELECT v.first_name, v.last_name, COALESCE(tc.total_tasks, 0) as total_tasks
+                  FROM volunteers v
+                  LEFT JOIN TaskCounts tc ON v.id = tc.volunteer_id
+                  ORDER BY total_tasks DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
     public function getEventEngagementReport() {
                 $query = "SELECT 
                                         e.event_name, 
