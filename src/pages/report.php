@@ -10,6 +10,7 @@ $report = new ReportGenerator($db);
 $summary = $report->getSummaryStats();
 $participation = $report->getVolunteerParticipationReport();
 $events = $report->getEventEngagementReport();
+$taskCounts = $report->getVolunteersWithTaskCounts();
 ?>
 
 <h1 class="h5">Reports</h1>
@@ -60,6 +61,23 @@ $events = $report->getEventEngagementReport();
                 </tr>
             <?php endforeach; else: ?>
                 <tr><td colspan="4" class="center muted">No event engagement data</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<h2 class="h5" style="margin-top:18px;">Task Distribution</h2>
+<div class="card" style="margin-top:8px;">
+    <table class="table">
+        <thead><tr><th>Volunteer</th><th>Total Tasks</th></tr></thead>
+        <tbody>
+            <?php if (!empty($taskCounts)): foreach($taskCounts as $row): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?></td>
+                    <td><?php echo $row['total_tasks']; ?></td>
+                </tr>
+            <?php endforeach; else: ?>
+                <tr><td colspan="2" class="center muted">No task data</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
